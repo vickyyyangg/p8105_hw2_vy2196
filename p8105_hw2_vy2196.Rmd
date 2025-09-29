@@ -33,3 +33,9 @@ snp_df = read_csv(file = "data/snp.csv") |>
 
 snp_df
 ```
+
+```{r}
+unemployment_df = read_csv(file = "data/unemployment.csv")
+unemployment_df
+```
+
