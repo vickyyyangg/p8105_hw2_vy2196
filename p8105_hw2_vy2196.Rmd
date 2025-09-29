@@ -26,7 +26,6 @@ snp_df = read_csv(file = "data/snp.csv") |>
            sep = "/", convert = TRUE) |>
   mutate(year = ifelse(year < 50, 2000 + year,
                      ifelse(year < 100, 1900 + year, year))) |>
-
   mutate(month = month(month, label = TRUE, abbr = FALSE)) |>
   arrange(year, month, day) |>
   select(year, month, day, everything())
@@ -35,7 +34,35 @@ snp_df
 ```
 
 ```{r}
-unemployment_df = read_csv(file = "data/unemployment.csv")
+unemployment_df = read_csv(file = "data/unemployment.csv") |>
+  # switch from wide to long
+    pivot_longer(
+      cols = Jan:Dec,
+      names_to = "month",
+      values_to = "unemployment") |>
+  # Rename Year to year
+  rename(year = Year) |>
+  # Convert abbreviations to full month names
+  mutate(
+    month = recode(month,
+                   "Jan" = "January",
+                   "Feb" = "February",
+                   "Mar" = "March",
+                   "Apr" = "April",
+                   "May" = "May",
+                   "Jun" = "June",
+                   "Jul" = "July",
+                   "Aug" = "August",
+                   "Sep" = "September",
+                   "Oct" = "October",
+                   "Nov" = "November",
+                   "Dec" = "December")
+  ) |>
+  arrange(year, month) |>
+  select(year, month, everything())
+  
 unemployment_df
 ```
+
+
 
