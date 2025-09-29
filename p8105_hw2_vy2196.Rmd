@@ -1,0 +1,12 @@
+---
+title: "p8105_hw2_vy2196"
+output: github_document
+---
+
+### Problem 1
+
+```{r message=FALSE, warning=FALSE}
+library(tidyverse)
+
+pols_month_df = read_csv(file = "data/pols-month.csv") 
+```
