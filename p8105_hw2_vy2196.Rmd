@@ -12,10 +12,12 @@ pols_month_df = read_csv(file = "data/pols-month.csv") |>
     # break up the variable 
     separate(mon, into = c("year", "month", "day"), sep = "-") |>
   # replace month number with month name
-  mutate(month = month.name[as.integer(month)],
-         president = case_when(
-           prez_gop == 1 ~ "gop",
-           prez_dem == 1 ~ "dem")) |>
+  mutate(
+    year = as.integer(year),
+    month = month.name[as.integer(month)],
+    president = case_when(
+      prez_gop == 1 ~ "gop",
+      prez_dem == 1 ~ "dem")) |>
   select(-prez_gop, -prez_dem, -day)
 pols_month_df
 ```
@@ -24,8 +26,10 @@ pols_month_df
 snp_df = read_csv(file = "data/snp.csv") |>
   separate(date, into = c("year", "month", "day"), 
            sep = "/", convert = TRUE) |>
-  mutate(year = ifelse(year < 50, 2000 + year,
-                     ifelse(year < 100, 1900 + year, year))) |>
+  mutate(
+    year = ifelse(year < 50, 2000 + year,
+                     ifelse(year < 100, 1900 + year, year)),
+    year = as.integer(year)) |>
   mutate(month = month(month, label = TRUE, abbr = FALSE)) |>
   arrange(year, month, day) |>
   select(year, month, day, everything())
@@ -44,6 +48,7 @@ unemployment_df = read_csv(file = "data/unemployment.csv") |>
   rename(year = Year) |>
   # Convert abbreviations to full month names
   mutate(
+    year = as.integer(year),
     month = recode(month,
                    "Jan" = "January",
                    "Feb" = "February",
@@ -63,6 +68,9 @@ unemployment_df = read_csv(file = "data/unemployment.csv") |>
   
 unemployment_df
 ```
+
+
+
 
 
 
