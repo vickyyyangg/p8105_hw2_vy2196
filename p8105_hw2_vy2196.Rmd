@@ -19,3 +19,9 @@ pols_month_df = read_csv(file = "data/pols-month.csv") |>
   select(-prez_gop, -prez_dem, -day)
 pols_month_df
 ```
+
+```{r}
+snp_df = read_csv(file = "data/snp.csv") 
+
+snp_df
+```
