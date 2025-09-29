@@ -8,5 +8,14 @@ output: github_document
 ```{r message=FALSE, warning=FALSE}
 library(tidyverse)
 
-pols_month_df = read_csv(file = "data/pols-month.csv") 
+pols_month_df = read_csv(file = "data/pols-month.csv") |>
+    # break up the variable 
+    separate(mon, into = c("year", "month", "day"), sep = "-") |>
+  # replace month number with month name
+  mutate(month = month.name[as.integer(month)],
+         president = case_when(
+           prez_gop == 1 ~ "gop",
+           prez_dem == 1 ~ "dem")) |>
+  select(-prez_gop, -prez_dem, -day)
+pols_month_df
 ```
