@@ -21,7 +21,15 @@ pols_month_df
 ```
 
 ```{r}
-snp_df = read_csv(file = "data/snp.csv") 
+snp_df = read_csv(file = "data/snp.csv") |>
+  separate(date, into = c("year", "month", "day"), 
+           sep = "/", convert = TRUE) |>
+  mutate(year = ifelse(year < 50, 2000 + year,
+                     ifelse(year < 100, 1900 + year, year))) |>
+
+  mutate(month = month(month, label = TRUE, abbr = FALSE)) |>
+  arrange(year, month, day) |>
+  select(year, month, day, everything())
 
 snp_df
 ```
