@@ -124,6 +124,18 @@ mr_trash
 ```
 
 
+```{r}
+# Import and clean Professor Trash Wheel
+pro_trash_wheel = read_excel ("data/trash_wheel.xlsx", 
+                       sheet = "Professor Trash Wheel", range = "A2:M134") |>
+  #Removes rows where the Dumpster column is blank
+  filter(!is.na(Dumpster)) |>
+  #Converts messy column names
+  janitor::clean_names() |>
+  mutate(trash_wheel = "Professor Trash Wheel")
+
+pro_trash_wheel
+```
 
 
 
