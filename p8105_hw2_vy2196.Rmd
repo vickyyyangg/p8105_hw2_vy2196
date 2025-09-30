@@ -137,6 +137,21 @@ pro_trash_wheel = read_excel ("data/trash_wheel.xlsx",
 pro_trash_wheel
 ```
 
+```{r}
 
+gwynnda_trash_wheel = read_excel ("data/trash_wheel.xlsx", 
+                       sheet = "Gwynns Falls Trash Wheel") |>
+  #Removes rows where the Dumpster column is blank
+  filter(!is.na(Dumpster)) |>
+  #Converts messy column names
+  janitor::clean_names() |>
+  mutate(trash_wheel = "Gwynns Falls Trash Wheel")
+
+pro_trash_wheel
+```
+
+```{r}
+
+```
 
 
