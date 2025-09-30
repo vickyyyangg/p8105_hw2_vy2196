@@ -14,7 +14,8 @@ pols_month_df = read_csv(file = "data/pols-month.csv") |>
   # replace month number with month name
   mutate(
     year = as.integer(year),
-    month = month.name[as.integer(month)],
+    month = factor(month.name[as.integer(month)],
+                   levels = month.name, ordered = TRUE),
     president = case_when(
       prez_gop == 1 ~ "gop",
       prez_dem == 1 ~ "dem")) |>
@@ -24,15 +25,17 @@ pols_month_df
 
 ```{r}
 snp_df = read_csv(file = "data/snp.csv") |>
-  separate(date, into = c("year", "month", "day"), 
+  janitor::clean_names() |>
+  separate(date, into = c("month", "day", "year"), 
            sep = "/", convert = TRUE) |>
   mutate(
     year = ifelse(year < 50, 2000 + year,
                      ifelse(year < 100, 1900 + year, year)),
     year = as.integer(year)) |>
-  mutate(month = month(month, label = TRUE, abbr = FALSE)) |>
-  arrange(year, month, day) |>
-  select(year, month, day, everything())
+  mutate(month = factor(month(month, label = TRUE, abbr = FALSE),
+                   levels = month.name, ordered = TRUE)) |>
+  arrange(year, month) |>
+  select(year, month, everything(), -day)
 
 snp_df
 ```
@@ -61,13 +64,26 @@ unemployment_df = read_csv(file = "data/unemployment.csv") |>
                    "Sep" = "September",
                    "Oct" = "October",
                    "Nov" = "November",
-                   "Dec" = "December")
-  ) |>
+                   "Dec" = "December"),
+    month = factor(month, levels = month.name, ordered = TRUE)) |>
   arrange(year, month) |>
-  select(year, month, everything())
+  select(year, month, unemployment)
   
 unemployment_df
 ```
+
+```{r}
+merged_data = 
+  left_join(pols_month_df, snp_df, by = c("year", "month")) |> 
+  left_join(x = _, y = unemployment_df, by = c("year", "month")) 
+names(merged_data)
+glimpse(merged_data)
+
+merged_data
+
+```
+
+
 
 
 
