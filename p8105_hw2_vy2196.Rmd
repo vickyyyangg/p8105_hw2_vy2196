@@ -5,8 +5,13 @@ output: github_document
 
 ### Problem 1
 
-```{r message=FALSE, warning=FALSE}
+```{r}
 library(tidyverse)
+library(readxl)
+```
+
+
+```{r message=FALSE, warning=FALSE}
 
 pols_month_df = read_csv(file = "data/pols-month.csv") |>
     # break up the variable 
@@ -100,6 +105,23 @@ The dimension of `unemployment_df` is 816 x 3 and the year range is from 1948 - 
 
 
 ## Problem 2
+
+
+```{r}
+# Import and clean Mr. Trash Wheel
+mr_trash = read_excel ("data/trash_wheel.xlsx", 
+                       sheet = "Mr. Trash Wheel", range = "A2:N709") |>
+  #Removes rows where the Dumpster column is blank
+  filter(!is.na(Dumpster)) |>
+  #Converts messy column names
+  janitor::clean_names() |>
+  mutate(
+    #rounds sports ball counts to the nearest whole number
+    sports_balls = as.integer(round(sports_balls)),
+    trash_wheel = "Mr. Trash Wheel")
+
+mr_trash
+```
 
 
 
