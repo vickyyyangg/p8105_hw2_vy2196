@@ -159,3 +159,42 @@ gwynns_trash_wheel = read_excel ("data/trash_wheel.xlsx",
 gwynns_trash_wheel
 ```
 
+```{r}
+#combine data set
+
+trash_wheel_data = bind_rows(
+  mr_trash,
+  prof_trash_wheel,
+  gwynns_trash_wheel)
+
+trash_wheel_data
+
+```
+
+### Summary Paragraph
+
+```{r}
+# Filter Gwynns June 2022
+gwynns_june2022 = filter(trash_wheel_data,
+                           trash_wheel == "Gwynns Falls Trash Wheel",
+                           year == 2022,
+                           month == "June")
+
+# Total cigarette butts for Gwynns June 2022
+gwynns_cigs_june22 = summarise(
+  gwynns_june2022,
+  total_cigs = sum(cigarette_butts, na.rm = TRUE)
+)
+
+# Total weight for Professor Trash Wheel
+prof_total_weight = trash_wheel_data |>
+  filter(trash_wheel == "Professor Trash Wheel") |>
+  summarise(total_weight = sum(weight_tons, na.rm = TRUE))
+
+```
+
+
+The combined Trash Wheel data set contains 1188 observations. The key variables include `dumpster, month, year, date, weight, volume, plastic bottles, polystyrene, cigarette butts, glass bottles, plastic bags, wrappers, homes powered`. The total weight of trash collected by Professor Trash Wheel is `r round(prof_total_weight[["total_weight"]], 1)` tons of trash. Specifically for Gwynns Falls Trash Wheel on June 2022, Gwynns collected `r gwynns_cigs_june22[["total_cigs"]]` cigarette butts.
+
+
+
