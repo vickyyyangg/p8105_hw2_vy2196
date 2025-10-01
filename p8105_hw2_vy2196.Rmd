@@ -8,6 +8,12 @@ output: github_document
 ```{r}
 library(tidyverse)
 library(readxl)
+library(janitor)
+library(lubridate)
+library(stringr)
+library(dplyr)
+library(knitr)
+
 ```
 
 
@@ -90,9 +96,9 @@ merged_data
 
 ```{r}
 # checking the range of year for each df
-range(pols_month_df$year)
-range(snp_df$year)
-range(unemployment_df$year)
+range(pols_month_df[["year"]])
+range(snp_df[["year"]])
+range(unemployment_df[["year"]])
 
 ```
 
@@ -118,6 +124,7 @@ mr_trash = read_excel ("data/trash_wheel.xlsx",
   mutate(
     #rounds sports ball counts to the nearest whole number
     sports_balls = as.integer(round(sports_balls)),
+    year = as.integer(year),
     trash_wheel = "Mr. Trash Wheel")
 
 mr_trash
@@ -126,32 +133,29 @@ mr_trash
 
 ```{r}
 # Import and clean Professor Trash Wheel
-pro_trash_wheel = read_excel ("data/trash_wheel.xlsx", 
+prof_trash_wheel = read_excel ("data/trash_wheel.xlsx", 
                        sheet = "Professor Trash Wheel", range = "A2:M134") |>
   #Removes rows where the Dumpster column is blank
   filter(!is.na(Dumpster)) |>
   #Converts messy column names
   janitor::clean_names() |>
-  mutate(trash_wheel = "Professor Trash Wheel")
+  mutate(trash_wheel = "Professor Trash Wheel",
+         year = as.integer(year))
 
-pro_trash_wheel
+prof_trash_wheel
 ```
 
 ```{r}
-
-gwynnda_trash_wheel = read_excel ("data/trash_wheel.xlsx", 
+# Import and clean Gwynns Falls Trash Wheel
+gwynns_trash_wheel = read_excel ("data/trash_wheel.xlsx", 
                        sheet = "Gwynns Falls Trash Wheel") |>
   #Removes rows where the Dumpster column is blank
   filter(!is.na(Dumpster)) |>
   #Converts messy column names
   janitor::clean_names() |>
-  mutate(trash_wheel = "Gwynns Falls Trash Wheel")
+  mutate(trash_wheel = "Gwynns Falls Trash Wheel",
+         year = as.integer(year))
 
-pro_trash_wheel
+gwynns_trash_wheel
 ```
-
-```{r}
-
-```
-
 
