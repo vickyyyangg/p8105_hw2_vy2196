@@ -246,3 +246,67 @@ nyc_updated_df = nyc_zipcodes_df |>
 
 ```
 
+```{r}
+#joining 2 datasets
+final_df = zip_codes_df |>
+  full_join(nyc_updated_df, by = c("zip_code", "date", "county_name"))
+```
+
+
+```{r}
+#finding unique zip_code and neighborhood
+final_df |> 
+  summarise(
+    unique_zips = n_distinct(zip_code),
+    unique_neighborhoods = n_distinct(neighborhood))
+```
+
+
+
+### Description of the Final Dataset
+
+There is a total of 17,606 observations. There is 320 unique ZIP codes and 43 unique neighborhoods.
+
+
+```{r}
+#only zip_code in zip_codes_df
+zip_only = zip_codes_df |> 
+  anti_join(nyc_updated_df, by = "zip_code")
+
+# how many unique ZIPs
+zip_only |> summarise(unique_missing_zips = n_distinct(zip_code))
+
+
+```
+
+There are `r nrow(zip_only)` ZIP codes in the ZIP code dataset that do not appear in the Zillow dataset. 
+For example, the first few are: `r paste(head(zip_only$zip_code, 5), collapse = ", ")`. These ZIP codes might be excluded because some areas are not traditional residential areas such as universities, military bases, or hospitals. Another reason could be due to insufficient listings where Zillow does not have enough rental listings to compute reliable estimates. 
+
+
+```{r}
+#comparing rental prices
+
+rent_change = final_df |>
+  # Keep only January 2020 and 2021
+  filter(month(date) == 1 & year(date) %in% c(2020, 2021)) |>
+  mutate(year = year(date)) |>
+  select(zip_code, borough = county_name, neighborhood, year, rent) |>
+  pivot_wider(
+    names_from = year,
+    values_from = rent,
+    names_prefix = "rent_"
+  ) |>
+  # Compute drop
+  mutate(price_change = rent_2021 - rent_2020) |>
+  arrange(price_change) |>   # most negative first
+  slice_head(n = 10)
+
+#table
+kable(
+  rent_change,
+  caption = "Top 10 ZIP codes with largest rental price drop (Jan 2020 to Jan 2021)"
+)
+```
+
+
+
