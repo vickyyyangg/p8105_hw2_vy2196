@@ -197,4 +197,52 @@ prof_total_weight = trash_wheel_data |>
 The combined Trash Wheel data set contains 1188 observations. The key variables include `dumpster, month, year, date, weight, volume, plastic bottles, polystyrene, cigarette butts, glass bottles, plastic bags, wrappers, homes powered`. The total weight of trash collected by Professor Trash Wheel is `r round(prof_total_weight[["total_weight"]], 1)` tons of trash. Specifically for Gwynns Falls Trash Wheel on June 2022, Gwynns collected `r gwynns_cigs_june22[["total_cigs"]]` cigarette butts.
 
 
+## Problem 3
+
+```{r}
+# cleaning zip_codes.csv
+
+zip_codes_df = read_csv(file = "zillow_data/zip_codes.csv") |>
+  janitor::clean_names() |>
+  rename(date = file_date, county_name = county) |>
+  #make sure all zip_code has 5 numbers
+  mutate(ZipCode = str_pad(as.character(zip_code), 5, side = "left", pad = "0"),
+         date = mdy(date)) |>
+  #remove ZipCode
+  select(-ZipCode, -county_code)
+
+```
+
+
+```{r}
+# cleaning nyc_zipcodes.csv
+
+nyc_zipcodes_df = read_csv(file = "zillow_data/nyc_zipcodes.csv") |>
+  janitor::clean_names() |>
+  mutate(RegionName = str_pad(as.character(region_name), 
+                              5, side = "left", pad = "0")) |>
+  rename(zip_code = region_name) |>
+  #removing x in front of all the dates value
+  rename_with(~ str_remove(.x, "^x")) |>
+  #removing duplicates
+  select(-region_type, -state, -RegionName)
+
+
+#select all the dates and match the format
+date_cols = nyc_zipcodes_df |>
+  #match the dates format
+  select(matches("^20\\d{2}_\\d{2}_\\d{2}$")) |>
+  names()
+
+#pivot all the dates
+nyc_updated_df = nyc_zipcodes_df |>
+  pivot_longer(
+    cols = all_of(date_cols),   # only the date columns
+    #put them under data columns
+    names_to = "date",
+    #store their vlaues under rent
+    values_to = "rent") |>
+  mutate(date = lubridate::ymd(date))
+
+```
 
